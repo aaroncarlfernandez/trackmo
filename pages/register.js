@@ -1,6 +1,15 @@
 import {Form, Button, Container } from 'react-bootstrap'
+import View from '../components/View'
 
-export default function Register() {
+export default () => {
+    return (
+        <View title="Register Account" >
+            <Register />
+        </View>
+    )
+}
+
+const Register = () => {
 
     return (
         <Container className="mt-5">

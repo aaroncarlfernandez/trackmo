@@ -8,8 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
+    "bootstrap": "^5.0.1",
     "next": "10.x",
     "react": "17.x",
-    "react-dom": "17.x"
+    "react-bootstrap": "^1.6.1",
+    "react-dom": "17.x",
+    "sweetalert2": "^11.0.16"
   }
 }

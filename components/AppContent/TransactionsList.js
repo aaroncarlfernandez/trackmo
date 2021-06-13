@@ -1,28 +1,30 @@
-import React, {Component, useContext} from 'react'
+import React, {Component} from 'react'
 import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
 export default class TransactionsList extends Component {
 
-
     state = {
         transactions: []
     }
-    // componentDidMount() {
-    //     fetch(`${AppHelper.API_URL}/api/users/transactions/${localStorage.getItem('userId')}`, {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-    //         }
-    //     })
-    //     .then((response) => response.json())
-    //     .then((transactions) => {
-    //         this.setState({ transactions: transactions })
-    //     });
-    //  }
+    componentDidMount() {
+        if (typeof window !== "undefined") {
+            fetch(`${AppHelper.API_URL}/api/users/transactions/${localStorage.getItem('userId')}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                }
+            })
+            .then((response) => response.json())
+            .then((transactions) => {
+                this.setState({ transactions: transactions })
+            });
+        }
+     }
 
      render() {
+
         const transactionRows = this.state.transactions.map((transaction) => {
             return (
                 <div key={transaction._id} className="expenseRow Unreported cash isInlineEditEnabled" data-transaction-id="54596713733685250" role="button" >

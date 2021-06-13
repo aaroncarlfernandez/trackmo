@@ -1,9 +1,7 @@
 import Image from 'next/image'
-import { useContext, useState, useEffect } from "react"
-import UserContext from '../UserContext'
+import { useState, useEffect } from "react"
 
 export default function Sidepane() {
-    const {userDetails} = useContext(UserContext)
 
     const [firstName, setFirstName] = useState(null)
     const [lastName, setLastName] = useState(null)
@@ -26,8 +24,6 @@ export default function Sidepane() {
                 </div>
                 <div className="user-email my-2">{firstName} {lastName}</div>
                 <div className="user-email my-2">Balance: {balance} PHP</div>
-                {/* <div className="user-email my-2">{userDetails.firstName} {userDetails.lastName}</div>
-                <div className="user-email my-2">Balance: {userDetails.balance} PHP</div> */}
             </div>
 
             <div className="sidepane__nav mt-4">

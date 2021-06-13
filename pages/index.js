@@ -4,7 +4,7 @@ import View from "../components/View"
 
 export default function Home() {
   return (
-    <View title={"TrackMo"}>
+    <View title={"TrackMo"} cssFile={"../styles/Theme.css"}>
       <HomepageBackgroundContainer />
       <Homepage />
     </View>

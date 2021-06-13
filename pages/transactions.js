@@ -2,7 +2,7 @@ import Sidepane from "../components/Sidepane"
 import MenuToggle from "../components/MenuToggle"
 import AppContent from "../components/AppContent/AppContent"
 import DialogContainer from "../components/DialogContainer/DialogContainer"
-import View2 from "../components/View2"
+import View from "../components/View"
 
 import { useContext } from "react"
 
@@ -13,7 +13,7 @@ export default function index() {
 
   const dialogContainer = (newSelected!=="") ? <DialogContainer /> : null
   return (
-    <View2 title={"TrackMo"}>
+    <View title={"TrackMo"} cssFile={"../styles/Content.css"}>
       <div className="ofh">
         <input type="checkbox" id={'menu-toggle'} />
         <Sidepane />
@@ -21,6 +21,6 @@ export default function index() {
         <AppContent />
         {dialogContainer}
       </div>
-    </View2>
+    </View>
   )
 }

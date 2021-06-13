@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import { useState, useContext, useEffect } from "react"
-import AppHelper from "../app-helper"
+import { useContext } from "react"
 import UserContext from '../UserContext'
 
 export default function Sidepane() {
@@ -15,10 +14,8 @@ export default function Sidepane() {
                         <Image src="/avatar_4.png" alt="User icon" width={60} height={60}  />
                     </a>
                 </div>
-                <div className="user-email my-2">{localStorage.getItem("firstName")} {localStorage.getItem("lastName")}</div>
-                <div className="user-email my-2">Balance: {localStorage.getItem("balance")} PHP</div>
-                {/* <div className="user-email my-2">{userDetails.firstName} {userDetails.lastName}</div>
-                <div className="user-email my-2">Balance: {userDetails.balance} PHP</div> */}
+                <div className="user-email my-2">{userDetails.firstName} {userDetails.lastName}</div>
+                <div className="user-email my-2">Balance: {userDetails.balance} PHP</div>
             </div>
 
             <div className="sidepane__nav mt-4">

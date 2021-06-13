@@ -1,6 +1,4 @@
-import Image from 'next/image'
-import { useState, useEffect, useContext } from "react"
-import { Container, Row, Col } from 'react-bootstrap'
+import { useState } from "react"
 
 export default function DialogContainer() {
     const [categorySelected, setCategorySelected] = useState(false);

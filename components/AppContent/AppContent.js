@@ -1,8 +1,7 @@
-import { useState, useEffect, useContext } from "react"
+import { useContext } from "react"
 import UserContext from '../../UserContext'
 
 import PageHeader from "./PageHeader"
-import EmptyState from "./EmptyState"
 import TransactionsList from "./TransactionsList"
 
 const AppContent = () => {

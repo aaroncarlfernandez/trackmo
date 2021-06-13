@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import Router from "next/router";
-
-import { UserProvider } from "../UserContext";
-import AppHelper from "../app-helper";
+import { UserProvider } from "../UserContext"
 
 function MyApp({ Component, pageProps }) {
   const [accessToken, setAccessToken] = useState(null);
@@ -17,7 +15,7 @@ function MyApp({ Component, pageProps }) {
   // };
 
   useEffect(() => {
-    if (localStorage.getItem('accessToken')) {
+    if (accessToken!==null) {
       // setAccessToken(localStorage.getItem('accessToken'));
       // setUserDetails({
       //   userId: localStorage.getItem("userId"),

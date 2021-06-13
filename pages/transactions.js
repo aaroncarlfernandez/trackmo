@@ -4,7 +4,7 @@ import AppContent from "../components/AppContent/AppContent"
 import DialogContainer from "../components/DialogContainer/DialogContainer"
 import View2 from "../components/View2"
 
-import { useState, useEffect, useContext } from "react"
+import { useContext } from "react"
 
 import UserContext from '../UserContext'
 

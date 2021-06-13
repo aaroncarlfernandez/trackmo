@@ -1,9 +1,19 @@
 import Image from 'next/image'
-import { useContext } from "react"
+import { useContext, useState, useEffect } from "react"
 import UserContext from '../UserContext'
 
 export default function Sidepane() {
     const {userDetails} = useContext(UserContext)
+
+    const [firstName, setFirstName] = useState(null)
+    const [lastName, setLastName] = useState(null)
+    const [balance, setBalance] = useState(null)
+
+    useEffect(() => {
+        setFirstName(localStorage.getItem('firstName'))
+        setLastName(localStorage.getItem('lastName'))
+        setBalance(localStorage.getItem('balance'))
+    }, [firstName, lastName, balance]);
 
     return (
         <div className="sidepane production">
@@ -14,6 +24,8 @@ export default function Sidepane() {
                         <Image src="/avatar_4.png" alt="User icon" width={60} height={60}  />
                     </a>
                 </div>
+                <div className="user-email my-2">{firstName} {lastName}</div>
+                <div className="user-email my-2">Balance: {balance} PHP</div>
                 {/* <div className="user-email my-2">{userDetails.firstName} {userDetails.lastName}</div>
                 <div className="user-email my-2">Balance: {userDetails.balance} PHP</div> */}
             </div>

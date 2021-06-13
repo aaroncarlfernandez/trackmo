@@ -123,11 +123,20 @@ export default function Homepage() {
             })
             .then((response) => response.json())
             .then((data) => {
-                setAccessToken(data.accessToken);
-                // localStorage.setItem("accessToken",data.accessToken);
-                // (accessToken) ?  setselectedOption("") : setLoginStatus("Incorrect Password");
+
+                // setIsLoggingIn(false);
+                // if (data.accessToken) { 
+                //     setAccessToken(data.accessToken);
+                // } else {
+                //     setLoginStatus("Incorrect Password");
+                // }
+
+                // setIsLoggingIn(false);
+                // setAccessToken(data.accessToken);
 
                 if (data.accessToken) {
+                    localStorage.setItem('accessToken', data.accessToken)
+                    
                     fetch(`${AppHelper.API_URL}/api/users/details`, {
                         method: "GET",
                         headers: {
@@ -138,18 +147,18 @@ export default function Homepage() {
                     .then((response) => response.json())
                     .then((data) => {
                         setIsLoggingIn(false);
-                        setUserDetails({
-                            userId: data._id,
-                            firstName: data.firstName,
-                            lastName: data.lastName,
-                            categories: data.categories,
-                            balance: data.balance
-                        })
+                        // setUserDetails({
+                        //     userId: data._id,
+                        //     firstName: data.firstName,
+                        //     lastName: data.lastName,
+                        //     categories: data.categories,
+                        //     balance: data.balance
+                        // })
 
-                        // localStorage.setItem("userId",data._id);
-                        // localStorage.setItem("firstName",data.firstName);
-                        // localStorage.setItem("lastName",data.lastName);
-                        // localStorage.setItem("balance",data.balance);
+                        localStorage.setItem('userId', data._id)
+                        localStorage.setItem('firstName', data.firstName)
+                        localStorage.setItem('lastName', data.lastName)
+                        localStorage.setItem('balance', data.balance)
 
                         Router.push("/transactions")
                     });
@@ -157,6 +166,7 @@ export default function Homepage() {
                     setIsLoggingIn(false);
                     setLoginStatus("Incorrect Password");
                 }
+
             });
 
         } else {

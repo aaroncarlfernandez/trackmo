@@ -3,7 +3,7 @@ import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
 const NewTransaction = () => {
-    const {accessToken,userDetails,setNewSelected} = useContext(UserContext)
+    const {setNewSelected} = useContext(UserContext)
 
     const [categoryName, setCategoryName] = useState("");
     const [categoryType, setCategoryType] = useState("Income");
@@ -14,13 +14,13 @@ const NewTransaction = () => {
         setIsCreating(true);
 
         fetch(`${AppHelper.API_URL}/api/users/add-category`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
             },
             body: JSON.stringify({
-                userId: userDetails.userId,
+                userId: localStorage.getItem("userId"),
                 name: categoryName,
                 type: categoryType
             })

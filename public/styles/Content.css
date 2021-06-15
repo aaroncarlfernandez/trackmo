@@ -1816,7 +1816,7 @@ ul.pairs li p.last {
     margin-left: 230px;
     position: relative;
 }
-body.ofh #content_wrapper {
+.ofh #content_wrapper {
     margin-left: 0;
 }
 .with_banner #wrapper {
@@ -17544,8 +17544,9 @@ button.close {
         padding: 20px;
     }
 }
-#expenses .app-content,
-#reports .app-content {
+/* #expenses .app-content,
+#reports .app-content { */
+.app-content {
     padding-bottom: 80px;
 }
 @media (min-width: 900px) {

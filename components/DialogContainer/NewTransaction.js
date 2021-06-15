@@ -3,15 +3,16 @@ import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
 const NewTransaction = () => {
-    const {accessToken,userDetails,setNewSelected} = useContext(UserContext)
+    
+    const {setNewSelected, categories, setTransactions} = useContext(UserContext)
 
-    const [categorySelected, setCategorySelected] = useState(false);
+    const [categorySelected, setCategorySelected] = useState("");
     const [categoryType, setCategoryType] = useState("Income");
     const [amount, setAmount] = useState(0);
-    const [description, setDescription] = useState();
+    const [description, setDescription] = useState("" );
     const [isCreating, setIsCreating] = useState(false);
 
-    let categoryOptions = userDetails.categories.map((category)=> {
+    let categoryOptions = categories.map((category)=> {
         return (<option value={category.name} key={category._id}>{category.name}</option>)
     })
 
@@ -21,7 +22,7 @@ const NewTransaction = () => {
     const lookup = (e) => {
         e.preventDefault();
 
-        let selectedCategory = userDetails.categories.filter(category => {
+        let selectedCategory = categories.filter(category => {
             return category.name === e.target.value
         })
 
@@ -36,10 +37,10 @@ const NewTransaction = () => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
             },
             body: JSON.stringify({
-                userId: userDetails.userId,
+                userId: localStorage.getItem("userId"),
                 categoryName: categorySelected,
                 categoryType: categoryType,
                 amount: amount,
@@ -48,6 +49,7 @@ const NewTransaction = () => {
         })
         .then((response) => response.json())
         .then((data) => {
+            setTransactions(data.transactions)
             setIsCreating(false)
             setNewSelected("")
         });

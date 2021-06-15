@@ -6,27 +6,20 @@ import { UserProvider } from "../UserContext"
 function MyApp({ Component, pageProps }) {
   const [accessToken, setAccessToken] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [categories, setCategories] = useState(null);
+  const [transactions, setTransactions] = useState(null);
   const [userId, setUserId] = useState(null);
   const [newSelected, setNewSelected] = useState("");
 
   const unsetUser = () => {
     localStorage.removeItem("accessToken");
     setAccessToken(null);
+    Router.push("/");
   };
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("accessToken");
-    if (savedToken) {
-      setAccessToken(savedToken);
-    } else {
-      Router.push("/");
-    }
-  }, []);
-
-  
   return (
     <React.Fragment>
-      <UserProvider value={{unsetUser, accessToken, setAccessToken, userDetails, setUserDetails, userId, setUserId, newSelected, setNewSelected  }}>
+      <UserProvider value={{unsetUser, newSelected, setNewSelected, categories, setCategories, transactions, setTransactions}}>
         <Component {...pageProps} />
       </UserProvider>
     </React.Fragment>

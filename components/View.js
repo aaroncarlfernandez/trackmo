@@ -11,7 +11,6 @@ const View = ({ title, cssFile, children }) => {
             name="viewport"
             content="initial-scale=1.0, width=device-width"
           />
-          {/* <link href="../styles/Theme.css" rel="stylesheet" /> */}
           <link href={cssFile} rel="stylesheet" />
         </Head>
         {children}

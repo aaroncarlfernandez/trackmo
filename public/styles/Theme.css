@@ -45049,4 +45049,7 @@ input[type="radio"] {
 .signup-sidepane__footer-logo h1{
     color: #fff;
 }
+#__next{
+    height: 100%;
+}
 

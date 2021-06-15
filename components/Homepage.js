@@ -7,7 +7,7 @@ import UserContext from '../UserContext';
 import AppHelper from "../app-helper"
 
 export default function Homepage() {
-    const {accessToken, setAccessToken, userDetails, setUserDetails} = useContext(UserContext)
+    const {accessToken, setTransactions} = useContext(UserContext)
 
     const [selectedOption, setselectedOption] = useState("");
 
@@ -124,8 +124,8 @@ export default function Homepage() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.accessToken) {
-                    localStorage.setItem('accessToken', data.accessToken)
 
+                    localStorage.setItem('accessToken', data.accessToken)
                     fetch(`${AppHelper.API_URL}/api/users/details`, {
                         method: "GET",
                         headers: {
@@ -139,9 +139,12 @@ export default function Homepage() {
                         localStorage.setItem('userId', data._id)
                         localStorage.setItem('firstName', data.firstName)
                         localStorage.setItem('lastName', data.lastName)
+                        localStorage.setItem('transactionsCount', data.transactions.length)
                         localStorage.setItem('balance', data.balance)
+                        setTransactions(data.transactions)
                         Router.push("/transactions")
                     });
+
                 } else {
                     setIsLoggingIn(false);
                     setLoginStatus("Incorrect Password");

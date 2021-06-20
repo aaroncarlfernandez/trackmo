@@ -63,7 +63,7 @@ export default function Homepage() {
             setInitEmailError("")
         } 
     }, [email])
-
+ 
     const checkEmail = (e) =>{
         e.preventDefault();
 

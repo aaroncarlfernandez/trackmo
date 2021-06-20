@@ -1,39 +1,53 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
-
 const NewTransaction = () => {
     const {setNewSelected} = useContext(UserContext)
 
     const [categoryName, setCategoryName] = useState("");
     const [categoryType, setCategoryType] = useState("Income");
     const [isCreating, setIsCreating] = useState(false);
+    const [isAddClicked, setIsAddClicked] = useState(false);
+    const [isCategoryNameValid, setIsCategoryNameValid] = useState(false);
+    
+    useEffect(() => {
+        if (isAddClicked) {
+            if (categoryName==="") {
+                setIsCategoryNameValid(false)
+            } else {
+                setIsCategoryNameValid(true)
+            }
+        }
+    }, [categoryName, isAddClicked])
 
     const add = (e) => {
         e.preventDefault();
-        setIsCreating(true);
-
-        fetch(`${AppHelper.API_URL}/api/users/add-category`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify({
-                userId: localStorage.getItem("userId"),
-                name: categoryName,
-                type: categoryType
+        
+        if (isCategoryNameValid) {
+            setIsCreating(true);
+            fetch(`${AppHelper.API_URL}/api/users/add-category`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                },
+                body: JSON.stringify({
+                    userId: localStorage.getItem("userId"),
+                    name: categoryName,
+                    type: categoryType
+                })
             })
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setIsCreating(false)
-            setNewSelected("")
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                setIsCreating(false)
+                setNewSelected("")
+            });
+        }
     }
 
     const addBtnClass = (isCreating) ? 'btn btn-lg btn-success-outline js_save disabled' : 'btn btn-lg btn-success-outline js_save';
     const addBtnValue = (isCreating) ? (<div className="spinner spinner-md"></div>) : "Add";
+    const categoryNameClass = (isAddClicked && !isCategoryNameValid) ? "longer error" : "longer"
 
     return (
         <div>
@@ -46,7 +60,7 @@ const NewTransaction = () => {
                                 <ol>
                                     <li className="separate">
                                         <label>Category</label>
-                                        <input className="longer" 
+                                        <input className={categoryNameClass}
                                             type="text" 
                                             maxLength="256" 
                                             placeholder="" 
@@ -72,7 +86,7 @@ const NewTransaction = () => {
             </div>
 
             <div className="dialog_footer textCenter">
-                <button className={addBtnClass} onClick={(e) => add(e)}> 
+                <button className={addBtnClass} onClick={(e) => {setIsAddClicked(true); add(e); }}> 
                     {addBtnValue}
                 </button>
             </div>

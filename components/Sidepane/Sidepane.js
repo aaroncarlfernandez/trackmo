@@ -1,36 +1,33 @@
-import Image from 'next/image'
-import { useState, useEffect, useContext } from "react"
+import { useContext } from "react"
+import Link from 'next/link'
 import UserContext from '../../UserContext';
 import SidepaneHeader from './SidepaneHeader';
 
 export default function Sidepane() {
-    const { unsetUser } = useContext(UserContext)
+    const { unsetUser, pageSelected, setPageSelected } = useContext(UserContext)
 
-    // const [firstName, setFirstName] = useState(null)
-    // const [lastName, setLastName] = useState(null)
-    // const [balance, setBalance] = useState(null)
-
-    // useEffect(() => {
-    //     setFirstName(localStorage.getItem('firstName'))
-    //     setLastName(localStorage.getItem('lastName'))
-    //     setBalance(localStorage.getItem('balance'))
-    // }, [firstName, lastName, balance]);
+    const transactionsClass = (pageSelected==="transactions") ? 'active' : 'app_page'
+    const reportsClass = (pageSelected==="reports") ? 'active' : 'app_page'
 
     return (
         <div className="sidepane production">
             <SidepaneHeader/>
 
-            <div className="sidepane__nav mt-4">
+            <div className="sidepane__nav">
                 <ul role="navigation">
-                    <li id="page_expenses" className="active">
-                        <a href="expenses" className="app_page">
-                            <span className="expensicons expensicons-receipt"></span>Transactions
-                        </a>
+                    <li id="page_expenses" className="app_page">
+                        <Link href="/logged-in">
+                            <a className={transactionsClass} onClick={()=> setPageSelected("transactions")}>
+                                <span className="expensicons expensicons-receipt"></span>Transactions
+                            </a>
+                        </Link>
                     </li>
                     <li id="page_reports">
-                        <a href="reports" className="app_page">
-                            <span className="expensicons expensicons-report"></span>Reports
-                        </a>
+                        <Link href="/logged-in">
+                            <a className={reportsClass} onClick={()=> setPageSelected("reports")}>
+                                <span className="expensicons expensicons-report"></span>Reports
+                            </a>
+                        </Link>
                     </li>
                     <li id="page_admin">
                         <a id="js_page_admin_link" className="app_page" onClick={()=> unsetUser()}>
@@ -42,7 +39,7 @@ export default function Sidepane() {
 
             <div>
                 <a href="/inbox" className="app_page">
-                    <h1 className="gmail_com">TrackMo</h1>
+                    <h1 className="gmail_com sidepane-bottom-logo">TrackMo</h1>
                 </a>
             </div>
 

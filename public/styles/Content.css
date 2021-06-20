@@ -16580,7 +16580,8 @@ button.close {
     flex: 0 0 126px;
     font-size: 14px;
     height: 126px;
-    margin: 0 0 10px;
+    /* margin: 0 0 10px; */
+    margin: 20px 0 30px;
     padding: 25px 10px;
     text-align: center;
 }
@@ -30892,7 +30893,8 @@ body:not(.ofh).with_banner .filterPanel .filterReset {
 }
 .comfortable .amount-meta-wrapper,
 .compact .amount-meta-wrapper {
-    width: 130px;
+    /* width: 130px; */
+    width: 200px;
 }
 .comfortable .details-wrapper,
 .compact .details-wrapper {
@@ -30926,7 +30928,8 @@ body:not(.ofh).with_banner .filterPanel .filterReset {
 }
 .has-2-columns .comfortable .merchant-report-wrapper,
 .has-2-columns .compact .merchant-report-wrapper {
-    width: 40%;
+    /* width: 40%; */
+    width: 15%;
 }
 .has-0-columns .comfortable .details-wrapper .inner,
 .has-0-columns .compact .details-wrapper .inner,
@@ -32858,4 +32861,63 @@ body:not(.ofh).with_banner .filterPanel .filterReset {
 }
 .color-red {
     color: red;
+}
+.neuloader {
+    width: 1em;
+    height: 1em;
+    font-size: 150px;
+    position: relative;
+  }
+  @media (max-width: 225px), (max-height: 225px) {
+    .neuloader {
+      font-size: 75px;
+    }
+  }
+  .neuloader:before, .neuloader:after {
+    content: "";
+    top: 0;
+    display: block;
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    border-width: 0.5em;
+    border-style: double;
+    border-color: transparent;
+    box-sizing: border-box;
+    border-radius: 1em;
+    -webkit-animation: spin 1s infinite;
+            animation: spin 1s infinite;
+  }
+  .neuloader:after {
+    left: 0;
+    border-left-color: #0185ff;
+  }
+  .neuloader:before {
+    right: 0;
+    border-right-color: #0185ff;
+    -webkit-animation-delay: -0.25s;
+            animation-delay: -0.25s;
+  }
+  
+  @-webkit-keyframes spin {
+    from {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(360deg);
+    }
+  }
+  .sidepane-bottom-logo {
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 20px;
+  }
+  .pr-15 {
+      padding-right: 15%;
+  }
+  .text-align-left {
+    text-align: left !important;
 }

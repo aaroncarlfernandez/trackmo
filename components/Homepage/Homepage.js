@@ -1,20 +1,19 @@
-import Router from "next/router";
 import { useState, useEffect, useContext } from "react";
+import { GoogleLogin } from 'react-google-login'
 import { Button } from "react-bootstrap";
 import Image from 'next/image'
-import UserContext from '../UserContext';
-
-import AppHelper from "../app-helper"
+import UserContext from '../../UserContext';
+import AppHelper from "../../app-helper"
 
 export default function Homepage() {
-    const {accessToken, setTransactions} = useContext(UserContext)
+    const {setAccessToken} = useContext(UserContext)
 
     const [selectedOption, setselectedOption] = useState("");
 
     const [email, setEmail] = useState("");
-    const [initEmailEmpty, setinitEmailEmpty] = useState(false);
+    const [initEmailError, setInitEmailError] = useState("");
     const [isEmailChecking, setIsEmailChecking] = useState(false);
-    const [password, setPassword] = useState("");
+    const [initialFormError, setInitialFormError] = useState("");
 
     const [firstName, setFirstName] = useState("");
     const [regFirstNameEmpty, setRegFirstNameEmpty] = useState(false);
@@ -22,6 +21,7 @@ export default function Homepage() {
     const [regLastNameEmpty, setRegLastNameEmpty] = useState(false);
     const [password1, setPassword1] = useState("");
     const [regPassword1Invalid, setRegPassword1Invalid] = useState(false);
+    const [regPassword1State, setRegPassword1State] = useState("");
     const [password2, setPassword2] = useState("");
     const [regPassword2Invalid, setRegPassword2Invalid] = useState(false);
     const [isRegisterClicked, setIsRegisterClicked] = useState(false);
@@ -32,28 +32,42 @@ export default function Homepage() {
     const [loginStatus, setLoginStatus] = useState("");
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+    const validEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    const specialCharacters = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
     useEffect(() => {
-        // (accessToken) ? Router.push("/transactions") : null;
-
-        const passwordValidation = /^(?=.*)(?=.*[A-Za-z])(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,15}$/;
-
+        //todo: handling of multiple first name in password validation
         if (isRegisterClicked) {
             (firstName==="") ? setRegFirstNameEmpty(true) : setRegFirstNameEmpty(false);
             (lastName==="") ? setRegLastNameEmpty(true) : setRegLastNameEmpty(false);
-            (!passwordValidation.test(password1)) ? setRegPassword1Invalid(true) : setRegPassword1Invalid(false);
             (password1!==password2) ? setRegPassword2Invalid(true) : setRegPassword2Invalid(false);
 
+            if (password1.length<8 || password1.length>16) {
+                setRegPassword1State("Password should be 8 to 16 characters only")
+            } else if (!specialCharacters.test(password1)) {
+                setRegPassword1State("Password should contain atleast one special character")
+            } else if (password1.toLowerCase().includes(firstName.toLowerCase())) {
+                setRegPassword1State("Password should not contain your first name")
+            } else {
+                setRegPassword1State("")
+            }
+
+            (regPassword1State!=="") ? setRegPassword1Invalid(true) : setRegPassword1Invalid(false);
             (!regFirstNameEmpty && !regLastNameEmpty && !regPassword1Invalid && !regPassword2Invalid) ?  setIsRegisterFormValid(true) : setIsRegisterFormValid(false);
         }
 
-    }, [firstName, lastName, password1, password2, regFirstNameEmpty, regLastNameEmpty, regPassword1Invalid, regPassword2Invalid, isRegisterClicked, isRegisterFormValid, accessToken])
+    }, [firstName, lastName, password1, password2, regFirstNameEmpty, regLastNameEmpty, regPassword1Invalid, regPassword2Invalid, isRegisterClicked, isRegisterFormValid, regPassword1State])
 
+    useEffect(() => {
+        if (validEmail.test(email)) {
+            setInitEmailError("")
+        } 
+    }, [email])
 
     const checkEmail = (e) =>{
         e.preventDefault();
 
-        if (email!=="") {
-            setinitEmailEmpty(false);
+        if (validEmail.test(email)) {
             setIsEmailChecking(true);
 
             fetch(`${AppHelper.API_URL}/api/users/email-exists`, {
@@ -68,11 +82,18 @@ export default function Homepage() {
             .then((response) => response.json())
             .then((data) => {
                 setIsEmailChecking(false);
-                (data) ?  setselectedOption("passwordForm") : setselectedOption("registerForm");
+                if (data.loginType===null) {
+                    setInitEmailError("")
+                    setselectedOption("registerForm")
+                } else if (data.loginType==="email") {
+                    setInitEmailError("")
+                    setselectedOption("passwordForm")
+                } else if (data.loginType==="google") {
+                    setInitEmailError("Please login using Google")
+                }
             });
-
         } else {
-            setinitEmailEmpty(true);
+            setInitEmailError("Please enter a valid email address")
         }
     }
 
@@ -124,51 +145,70 @@ export default function Homepage() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.accessToken) {
-
-                    localStorage.setItem('accessToken', data.accessToken)
-                    fetch(`${AppHelper.API_URL}/api/users/details`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${data.accessToken}`
-                        }
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setIsLoggingIn(false);
-                        localStorage.setItem('userId', data._id)
-                        localStorage.setItem('firstName', data.firstName)
-                        localStorage.setItem('lastName', data.lastName)
-                        localStorage.setItem('transactionsCount', data.transactions.length)
-                        localStorage.setItem('balance', data.balance)
-                        setTransactions(data.transactions)
-                        Router.push("/transactions")
-                    });
-
+                    setIsLoggingIn(false)
+                    setAccessToken(data.accessToken)
+                    localStorage.setItem("accessToken", data.accessToken)
                 } else {
-                    setIsLoggingIn(false);
-                    setLoginStatus("Incorrect Password");
+                    setIsLoggingIn(false)
+                    setLoginStatus("Incorrect Password")
                 }
             });
         } else {
-            setLoginStatus("Please enter your password");
+            setLoginStatus("Please enter your password")
         }
     }
 
+    const authenticateGoogleToken = (response) => {    
+        fetch(`${AppHelper.API_URL}/api/users/verify-google-id-token`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                tokenId: response.tokenId,
+             }),
+        })
+        .then((response) => response.json())
+        .then((data) => {    
+            if (data.accessToken !== undefined) {
+                setInitialFormError("")
+                setIsLoggingIn(false)
+                setAccessToken(data.accessToken)
+                localStorage.setItem("accessToken", data.accessToken)
+
+            } else if (data.error === "google-auth-error") {
+                setInitialFormError("Google authentication failed")
+            } else if (data.error === "login-type-error") {
+                setInitialFormError("Please log in using the Email option")
+            }
+        });
+    };
+
+    const initialFormErrorDisplay = (initialFormError!=="") ? (<small className="form-text text-muted has-error">{initialFormError}</small>) : null;
     const initialForm = (selectedOption==="") ? (
         <div className="d-flex flex-column">
             <div className="mb-4 text-break">
                 Welcome! How would you like to connect?
             </div>
             <button id={'js_click_showEmailForm'} className="btn btn-lg btn-white my-2 signup-option__icon signup-option__icon-email" onClick={()=>setselectedOption("emailForm")}>Email</button>
-            <button id={'js_click_googleSignIn'} className="btn btn-lg btn-white my-2 signup-option__icon signup-option__icon-google">Google</button>
+            <GoogleLogin
+                buttonText="Google"
+                onSuccess={authenticateGoogleToken}
+                onFailure={authenticateGoogleToken}
+                cookiePolicy={"single_host_origin"}
+                clientId="563020837047-iq6rrfqp70fgpjv4lgjnas7vp3obocgu.apps.googleusercontent.com"
+                render={renderProps => (
+                        <button onClick={renderProps.onClick} id={'js_click_googleSignIn'} className="btn btn-lg btn-white my-2 signup-option__icon signup-option__icon-google">Google</button>
+                )}
+            />
+            {initialFormErrorDisplay}
         </div>
     ) : null;
 
-    const emailClassName = (initEmailEmpty) ? 'form-control form-control-lg form-control--line has-error' : 'form-control form-control-lg form-control--line';
+    const emailClassName = (initEmailError!=="") ? 'form-control form-control-lg form-control--line has-error' : 'form-control form-control-lg form-control--line';
     const checkEmailBtnClass = (isEmailChecking) ? 'btn btn-lg btn-success disabled' : 'btn btn-lg btn-success';
     const checkEmailBtnValue = (isEmailChecking) ? (<div className="spinner spinner-md"></div>) : "Next";
-    const emailError = (initEmailEmpty) ? (<small className="form-text text-muted has-error">Please enter a valid email address</small>) : null;
+    const emailError = (initEmailError!=="") ? (<small className="form-text text-muted has-error">{initEmailError}</small>) : null;
     const emailInitialForm = (selectedOption==="emailForm") ? (
         <div className="d-flex flex-column">
             <form>
@@ -179,15 +219,16 @@ export default function Homepage() {
                             aria-label="Email" 
                             placeholder="Enter your email to begin" 
                             value={email} 
-                            onChange={(e) => {
-                                setEmail(e.target.value); 
-                                (email!=="") ? setinitEmailEmpty(false) : setinitEmailEmpty(true)  }
-                            } 
+                            onChange={(e) => { setEmail(e.target.value); }} 
                     />
                     {emailError}
                 </div>
                 <div className="d-flex justify-content-between">
-                    <a as={Button} id="js_click_showSignInOptions"  className="signup-controls__cancel" onClick={()=>setselectedOption("")}>Cancel</a>
+                    <a as={Button} id="js_click_showSignInOptions"
+                        className="signup-controls__cancel" 
+                        onClick={()=> {
+                            setselectedOption("")
+                        }} >Cancel</a>
                     <button id="js_click_submitLogin" className={checkEmailBtnClass} onClick={(e)=> {checkEmail(e)} }>{checkEmailBtnValue}</button>
                 </div>
             </form>
@@ -237,7 +278,7 @@ export default function Homepage() {
     const lastNameClasses = (regLastNameEmpty) ? 'form-control form-control-lg form-control--line has-error' : 'form-control form-control-lg form-control--line';
     const lastNameError = (regLastNameEmpty) ? (<small className="form-text text-muted has-error">Please enter your last name</small>) : null;
     const password1Classes = (regPassword1Invalid) ? 'form-control form-control-lg form-control--line has-error' : 'form-control form-control-lg form-control--line';
-    const password1Error = (regPassword1Invalid) ? (<small className="form-text text-muted has-error">Password should be atleast 6 characters and contain both alphanumeric and special character</small>) : null;
+    const password1Error = (regPassword1Invalid) ? (<small className="form-text text-muted has-error">{regPassword1State}</small>) : null;
     const password2Classes = (regPassword2Invalid) ? 'form-control form-control-lg form-control--line has-error' : 'form-control form-control-lg form-control--line';
     const password2Error = (regPassword2Invalid) ? (<small className="form-text text-muted has-error">Password confirmation should match a valid password</small>) : null;
     const registerBtnClass = (isRegistering) ? 'btn btn-lg btn-success disabled' : 'btn btn-lg btn-success';
@@ -342,7 +383,7 @@ export default function Homepage() {
 
                 <div className="signup-sidepane__footer text-center">
                     <div className="signup-sidepane__footer-logo">
-                        <h1 className="headline mb-4">TrackMo</h1>
+                        <h1 className="headline">TrackMo</h1>
                     </div>
                 </div>
             </div>

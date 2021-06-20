@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
-const PageHeader = () => {
+const PageHeader = ({ pageTitle }) => {
     const {setNewSelected, setCategories} = useContext(UserContext)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -38,23 +38,15 @@ const PageHeader = () => {
                                     aria-expanded="true"
                                     onClick={()=>(isOpen) ? setIsOpen(false) : setIsOpen(true)}
                                 >
-                                    <span className="px-3">New</span>
+                                    <span className="pr-15">Create</span>
                                     <span className="caret"></span>
                                 </button>
                                 
                                 <div className={newTransactionClasses}>
                                     <div className="list-group">
                                         <div className="list-group-item list-group-header is-borderless">
-                                            <h6 className="noMargin">Create</h6>
+                                            <h6 className="noMargin">Create new</h6>
                                         </div>
-                                        <button className="list-group-item is-borderless clickable expense" 
-                                            type="button"
-                                            onClick={()=>{ fetchCategories()
-                                                // setNewSelected("transaction")
-                                                // setIsOpen(false)
-                                            }}>
-                                            <span className="expensicons marginRight vAlignMiddle expensicons-receipt"></span>Transaction
-                                        </button>
                                         <button 
                                             className="list-group-item is-borderless clickable afew" 
                                             type="button"
@@ -64,6 +56,12 @@ const PageHeader = () => {
                                             }}>
                                             <span className="expensicons marginRight vAlignMiddle expensicons-spreadsheet"></span>Category
                                         </button>
+                                        <button className="list-group-item is-borderless clickable expense" 
+                                            type="button"
+                                            onClick={()=>{ fetchCategories()
+                                            }}>
+                                            <span className="expensicons marginRight vAlignMiddle expensicons-receipt"></span>Transaction
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +69,7 @@ const PageHeader = () => {
                     </div>
                 </div>
             </div>
-            <h1>Transactions</h1>
+            <h1>{pageTitle}</h1>
         </div>
     );
 }

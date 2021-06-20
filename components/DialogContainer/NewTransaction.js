@@ -1,16 +1,16 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
 const NewTransaction = () => {
-    
-    const {setNewSelected, categories, setTransactions} = useContext(UserContext)
+    const {setNewSelected, categories, setTransactions, setPageSelected, setBalance} = useContext(UserContext)
 
     const [categorySelected, setCategorySelected] = useState("");
     const [categoryType, setCategoryType] = useState("Income");
     const [amount, setAmount] = useState(0);
     const [description, setDescription] = useState("" );
     const [isCreating, setIsCreating] = useState(false);
+    const [isCategoriesEmpty, setIsCategoriesEmpty] = useState(true);
 
     let categoryOptions = categories.map((category)=> {
         return (<option value={category.name} key={category._id}>{category.name}</option>)
@@ -18,6 +18,16 @@ const NewTransaction = () => {
 
     const addBtnClass = (isCreating) ? 'btn btn-lg btn-success-outline js_save disabled' : 'btn btn-lg btn-success-outline js_save';
     const addBtnValue = (isCreating) ? (<div className="spinner spinner-md"></div>) : "Add";
+
+    useEffect(() => {
+        if (categories.length<=0) {
+            setCategorySelected("")
+            setIsCategoriesEmpty(true)
+        } else {
+            setCategorySelected(categories[0].name)
+            setIsCategoriesEmpty(false)
+        }
+    }, [categories])
 
     const lookup = (e) => {
         e.preventDefault();
@@ -31,31 +41,37 @@ const NewTransaction = () => {
 
     const add = (e) => {
         e.preventDefault();
-        setIsCreating(true);
 
-        fetch(`${AppHelper.API_URL}/api/users/add-transaction`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify({
-                userId: localStorage.getItem("userId"),
-                categoryName: categorySelected,
-                categoryType: categoryType,
-                amount: amount,
-                description: description
+        if (!isCategoriesEmpty) {
+            setIsCreating(true);
+            fetch(`${AppHelper.API_URL}/api/users/add-transaction`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                },
+                body: JSON.stringify({
+                    userId: localStorage.getItem("userId"),
+                    categoryName: categorySelected,
+                    categoryType: categoryType,
+                    amount: amount,
+                    description: description
+                })
             })
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setTransactions(data.transactions)
-            setIsCreating(false)
-            setNewSelected("")
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data.transactions)
+                setBalance(data.balance)
+                setTransactions(data.transactions)
+                setIsCreating(false)
+                setNewSelected("")
+                setPageSelected("transactions")
+            });
+        }
     }
 
-    const categoryTypeLabel = (categoryType==="Expense") ? (<label className="color-red">{categoryType}</label>) : (<label className="color-green">{categoryType}</label>)
+    const categoryTypeLabel = (categoryType==="Expense") ? (<label className="text-align-left color-red">{categoryType}</label>) : (<label className="text-align-left color-green">{categoryType}</label>)
+    const categoryOptionsClass = (isCategoriesEmpty) ? "long error" : "long" 
     return (
         <div>
             <div id={"newExpense3_panes"}>
@@ -67,7 +83,7 @@ const NewTransaction = () => {
                                 <ol>
                                     <li className="category_dropdown separate">
                                         <label>Category</label>
-                                        <select className="long" value={categorySelected} onChange={(e) => { setCategorySelected(e.target.value); lookup(e);  }} >
+                                        <select className={categoryOptionsClass} value={categorySelected} onChange={(e) => { setCategorySelected(e.target.value); lookup(e);  }} >
                                             {categoryOptions}
                                         </select>
                                     </li>
@@ -95,7 +111,7 @@ const NewTransaction = () => {
             </div>
 
             <div className="dialog_footer textCenter">
-                <button className={addBtnClass} onClick={(e) => add(e)}> 
+                <button className={addBtnClass} onClick={(e) => add(e) }> 
                     {addBtnValue}
                 </button>
             </div>

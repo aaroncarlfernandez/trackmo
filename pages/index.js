@@ -1,13 +1,17 @@
-import { useEffect } from "react"
-import Homepage from "../components/Homepage"
-import HomepageBackgroundContainer from "../components/BackgroundContainer"
+import { useEffect, useContext } from "react"
+import Homepage from "../components/Homepage/Homepage"
+import HomepageBackgroundContainer from "../components/Homepage/BackgroundContainer"
 import View from "../components/View"
+import UserContext from '../UserContext'
 
 export default function Home() {
+  const {loading} = useContext(UserContext);
+
   useEffect(() => {
     document.querySelector("body").classList.add("ofh")
   }, [])
-  return (
+
+  return (    
     <View title={"TrackMo"} cssFile={"../styles/Theme.css"}>
       <HomepageBackgroundContainer />
       <Homepage />

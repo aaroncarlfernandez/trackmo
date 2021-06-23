@@ -2,22 +2,26 @@ import { useState, useContext, useEffect } from "react"
 import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 const NewTransaction = () => {
-    const {setNewSelected} = useContext(UserContext)
+    const {setFormSelected, setCategories} = useContext(UserContext)
 
     const [categoryName, setCategoryName] = useState("");
     const [categoryType, setCategoryType] = useState("Income");
     const [isCreating, setIsCreating] = useState(false);
     const [isAddClicked, setIsAddClicked] = useState(false);
     const [isCategoryNameValid, setIsCategoryNameValid] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     
     useEffect(() => {
-        if (isAddClicked) {
-            if (categoryName==="") {
+        if (categoryName==="") {
+            if (isAddClicked) {
                 setIsCategoryNameValid(false)
-            } else {
-                setIsCategoryNameValid(true)
+                setErrorMessage("Category name cannot be blank")
             }
+        } else {
+            setIsCategoryNameValid(true)
+            setErrorMessage("")
         }
+
     }, [categoryName, isAddClicked])
 
     const add = (e) => {
@@ -40,7 +44,13 @@ const NewTransaction = () => {
             .then((response) => response.json())
             .then((data) => {
                 setIsCreating(false)
-                setNewSelected("")
+                if (data.error==="category-already-exists") {
+                    setIsCategoryNameValid(false)
+                    setErrorMessage("Category already exists")
+                } else {
+                    setFormSelected("")
+                    setCategories(data.categories)
+                }
             });
         }
     }
@@ -48,6 +58,7 @@ const NewTransaction = () => {
     const addBtnClass = (isCreating) ? 'btn btn-lg btn-success-outline js_save disabled' : 'btn btn-lg btn-success-outline js_save';
     const addBtnValue = (isCreating) ? (<div className="spinner spinner-md"></div>) : "Add";
     const categoryNameClass = (isAddClicked && !isCategoryNameValid) ? "longer error" : "longer"
+    const errorMessageElement = (errorMessage!=="") ? (<p class="color-red style-italic"> {errorMessage} </p>) : null
 
     return (
         <div>
@@ -86,6 +97,7 @@ const NewTransaction = () => {
             </div>
 
             <div className="dialog_footer textCenter">
+                {errorMessageElement}
                 <button className={addBtnClass} onClick={(e) => {setIsAddClicked(true); add(e); }}> 
                     {addBtnValue}
                 </button>

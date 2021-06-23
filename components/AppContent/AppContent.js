@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import PageHeader from "./PageHeader"
 import TransactionsList from "./TransactionsList"
 import Visualization from "./Visualization"

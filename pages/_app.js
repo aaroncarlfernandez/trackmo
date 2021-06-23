@@ -9,7 +9,8 @@ function MyApp({ Component, pageProps }) {
   const [categories, setCategories] = useState(null);
   const [transactions, setTransactions] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [newSelected, setNewSelected] = useState("");
+  const [formSelected, setFormSelected] = useState("");
+  const [transactionSelected, setTransactionSelected] = useState("");
 
   const unsetUser = () => {
     localStorage.removeItem("accessToken");
@@ -60,7 +61,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <React.Fragment>
-      <UserProvider value={{unsetUser, newSelected, setNewSelected, categories, setCategories, transactions, setTransactions, balance, setBalance, setAccessToken, pageSelected, setPageSelected, formatAmount}}>
+      <UserProvider value={{unsetUser, formSelected, setFormSelected, categories, setCategories, transactions, setTransactions, balance, setBalance, setAccessToken, pageSelected, setPageSelected, formatAmount, transactionSelected, setTransactionSelected}}>
         <Component {...pageProps} />
       </UserProvider>
     </React.Fragment>

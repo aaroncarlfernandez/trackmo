@@ -32856,11 +32856,27 @@ body:not(.ofh).with_banner .filterPanel .filterReset {
     z-index: 4002; 
     top: 71.7px !important;
 }
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .dialog_7-active {
+        width: 90%; 
+        z-index: 4002; 
+        top: 71.7px !important;
+    }
+    .expenseForm.form select.long {
+        max-width: 160px;
+    }
+    .form input.long, .form input.longer {
+        width: 140px !important;
+    }
+}
 .color-green {
     color: green;
 }
 .color-red {
     color: red;
+}
+.style-italic {
+    font-style: italic;
 }
 .neuloader {
     width: 1em;
@@ -32920,4 +32936,7 @@ body:not(.ofh).with_banner .filterPanel .filterReset {
   }
   .text-align-left {
     text-align: left !important;
+}
+.mx-15px {
+    margin: 10px 15px;
 }

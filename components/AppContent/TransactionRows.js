@@ -2,23 +2,29 @@ import { useContext, useEffect, useState } from "react"
 import UserContext from '../../UserContext'
 
 export default function TransactionRows () {
-    const { transactions, formatAmount } = useContext (UserContext)
+    const { transactions, formatAmount, setFormSelected, setTransactionSelected } = useContext (UserContext)
     const [fetchedTransactions, setFetchedTransactions] = useState(transactions);
 
     useEffect(() => {
         setFetchedTransactions(transactions)
     }, [transactions])
 
+    const openTransactionDialog = (e) => {
+        e.preventDefault();
+        console.log("clicked: " + e.currentTarget.id)
+        setFormSelected("transaction-update")
+        // setTransactionSelected(e.currentTarget.id)
+        setTransactionSelected(transactions.filter(transaction => transaction._id === e.currentTarget.id))
+    }
 
 
     let transactionRows = (fetchedTransactions===null) ? null : fetchedTransactions.sort(( a, b ) => { return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime() } ).map((transaction) => {
         
-        const categoryTypeSpan = (transaction.categoryType==="Income") ? (<span className="color-green bold">{transaction.categoryType}</span>) : (<span className="color-red bold">{transaction.categoryType}</span>)
         const categoryTypeClass = (transaction.categoryType==="Income") ? "report-status reimbursed" : "report-status deleted"
 
         return (
-            <div key={transaction._id} className="expenseRow Unreported cash isInlineEditEnabled" data-transaction-id="54596713733685250" role="button" >
-                <div className="expenseRow-inner">
+            <div key={transaction._id} id={transaction._id} className="expenseRow Unreported cash isInlineEditEnabled" role="button" onClick={(e)=> openTransactionDialog(e)}>
+                <div className="expenseRow-inner" >
                     <div className="expenseRow-wrapper">
                         <div className="handle-wrapper">
                             <div className="handle">

@@ -9,13 +9,13 @@ import { useContext, useEffect } from "react"
 import UserContext from '../../UserContext'
 
 export default function index() {
-  const { newSelected } = useContext(UserContext)
+  const { formSelected } = useContext(UserContext)
 
   useEffect(() => {
     document.querySelector("body").classList.add("ofh")
   }, [])
 
-  const dialogContainer = (newSelected!=="") ? <DialogContainer /> : null
+  const dialogContainer = (formSelected!=="") ? <DialogContainer /> : null
   return (
     <View title={"TrackMo"} cssFile={"../styles/Content.css"}>
       <input type="checkbox" id={'menu-toggle'} />

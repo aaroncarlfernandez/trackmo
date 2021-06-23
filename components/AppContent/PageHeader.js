@@ -1,29 +1,11 @@
 import { useContext, useState } from "react"
-import AppHelper from "../../app-helper"
 import UserContext from '../../UserContext'
 
 const PageHeader = ({ pageTitle }) => {
-    const {setNewSelected, setCategories} = useContext(UserContext)
+    const {setFormSelected, setTransactionSelected} = useContext(UserContext)
     const [isOpen, setIsOpen] = useState(false)
 
     const newTransactionClasses = (isOpen) ? 'icon-list-group create-expense-menu' : 'icon-list-group create-expense-menu hidden'
-
-    const fetchCategories = () => {
-        fetch(`${AppHelper.API_URL}/api/users/categories/${localStorage.getItem('userId')}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-            }
-        })
-        .then((response) => response.json())
-        .then((categories) => {
-            setCategories(categories);
-            setNewSelected("transaction")
-            setIsOpen(false)
-        });
-        
-    }
 
     return (
         <div className="page-header">
@@ -51,15 +33,19 @@ const PageHeader = ({ pageTitle }) => {
                                             className="list-group-item is-borderless clickable afew" 
                                             type="button"
                                             onClick={()=>{
-                                                setNewSelected("category")
+                                                setFormSelected("category")
                                                 setIsOpen(false)
                                             }}>
                                             <span className="expensicons marginRight vAlignMiddle expensicons-spreadsheet"></span>Category
                                         </button>
                                         <button className="list-group-item is-borderless clickable expense" 
                                             type="button"
-                                            onClick={()=>{ fetchCategories()
-                                            }}>
+                                            onClick={()=>{
+                                                setTransactionSelected(null)
+                                                setFormSelected("transactions")
+                                                setIsOpen(false)
+                                            }}
+                                            >
                                             <span className="expensicons marginRight vAlignMiddle expensicons-receipt"></span>Transaction
                                         </button>
                                     </div>

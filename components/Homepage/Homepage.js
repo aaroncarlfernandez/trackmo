@@ -26,7 +26,7 @@ export default function Homepage() {
     const [regPassword2Invalid, setRegPassword2Invalid] = useState(false);
     const [isRegisterClicked, setIsRegisterClicked] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
-    const [isRegisterFormValid, setIsRegisterFormValid] = useState(false);
+    const [isRegisterFormValid, setIsRegisterFormValid] = useState(true);
 
     const [loginPassword, setLoginPassword] = useState("");
     const [loginStatus, setLoginStatus] = useState("");

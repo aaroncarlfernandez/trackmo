@@ -1,13 +1,19 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import UserContext from '../../UserContext'
 
-import NewTransaction from "./NewTransaction"
-import NewCategory from "./NewCategory"
+import TransactionForm from "./TransactionForm"
+import CategoryForm from "./CategoryForm"
 const DialogContainer = () => {
-    const {newSelected, setNewSelected} = useContext(UserContext)
+    const {formSelected, setFormSelected, transactionSelected} = useContext(UserContext)
 
-    const title = (newSelected==="transaction") ? "New Transaction" : "New Category"
-    const form = (newSelected==="transaction") ? <NewTransaction/> : <NewCategory/>
+    let title = "New Transaction"
+    if (formSelected==="transaction-update") {
+        title = "Update Transaction"
+    } else if (formSelected==="category") {
+        title = "New Category"
+    }
+
+    const form = (formSelected==="category") ? <CategoryForm/> : <TransactionForm transactionDetails={transactionSelected} />
 
     return (
         <div id={'dialog_container'}>
@@ -16,7 +22,7 @@ const DialogContainer = () => {
             <div id={'dialog_7'} className="dialog dialog_new NewExpense dialog_7-active">
 
                 <div className="dialog_title">
-                    <a className="dialog_x" onClick={()=>setNewSelected("")}><i className="expensicons expensicons-remove"></i></a>
+                    <a className="dialog_x" onClick={()=>setFormSelected("")}><i className="expensicons expensicons-remove"></i></a>
                     <h1 className="dialog_title_text">{title}</h1>
                 </div>
                 {form}

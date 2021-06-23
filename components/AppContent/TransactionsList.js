@@ -15,7 +15,7 @@ const TransactionsList = () => {
                                 </div>
                             </div>
                             <div className="merchant-report-wrapper">
-                                <div className="inner comment">Category Name</div>
+                                <div className="inner comment">Category</div>
                             </div>
                             <div className="amount-meta-wrapper center">
                                 <div className="inner comment">Amount</div>
